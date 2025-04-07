@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>예화 입시 실기 시간 조회</title>
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f9f9f9;
+            padding: 40px;
+            text-align: center;
+        }
+        input {
+            padding: 10px;
+            margin: 5px;
+            width: 200px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+        }
+        #result {
+            margin-top: 30px;
+            font-size: 1.2em;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h2>예화 입시평가회 - 내 실기 시간 확인</h2>
+    <p>이름과 생년월일(6자리)을 입력하세요</p>
+    <input type="text" id="name" placeholder="이름">
+    <input type="text" id="birth" placeholder="생년월일 6자리 (예: 950101)">
+    <button onclick="checkTime()">확인</button>
+
+    <div id="result"></div>
+
+    <script>
+        const schedule = {
+            "한유진960425": {school: "서울대", time: "2025-01-05 오후 03:30", piece1: "쇼팽 녹턴 Op.9 No.2", piece2: "모차르트 소나타 K.545"},
+            "한민수901127": {school: "서울대", time: "2025-01-05 오후 04:30", piece1: "드뷔시 달빛", piece2: "베토벤 소나타 14번"},
+            "정지원950311": {school: "서울대", time: "2025-01-05 오후 03:00", piece1: "드뷔시 달빛", piece2: "쇼팽 녹턴 Op.9 No.2"},
+            "김현우960625": {school: "서울대", time: "2025-01-05 오후 12:00", piece1: "베토벤 소나타 14번", piece2: "쇼팽 녹턴 Op.9 No.2"},
+            "조예린980213": {school: "예원", time: "2025-01-05 오전 11:30", piece1: "모차르트 소나타 K.545", piece2: "드뷔시 달빛"},
+            "김지원960802": {school: "예원", time: "2025-01-05 오전 10:30", piece1: "드뷔시 달빛", piece2: "모차르트 소나타 K.545"},
+            "정민수900906": {school: "서울대", time: "2025-01-05 오전 10:00", piece1: "리스트 사랑의 꿈", piece2: "모차르트 소나타 K.545"},
+            "한예린900522": {school: "서울대", time: "2025-01-05 오후 09:00", piece1: "드뷔시 달빛", piece2: "쇼팽 녹턴 Op.9 No.2"},
+            "조민수990904": {school: "서울대", time: "2025-01-05 오후 01:00", piece1: "베토벤 소나타 14번", piece2: "쇼팽 녹턴 Op.9 No.2"},
+            "조지민920722": {school: "서울대", time: "2025-01-05 오후 09:30", piece1: "베토벤 소나타 14번", piece2: "드뷔시 달빛"},
+            "정유진910412": {school: "예원", time: "2025-01-05 오후 07:30", piece1: "쇼팽 녹턴 Op.9 No.2", piece2: "드뷔시 달빛"},
+            "이현우940601": {school: "서울대", time: "2025-01-05 오전 11:00", piece1: "쇼팽 녹턴 Op.9 No.2", piece2: "모차르트 소나타 K.545"},
+            "이현우910428": {school: "서울대", time: "2025-01-05 오후 02:00", piece1: "모차르트 소나타 K.545", piece2: "리스트 사랑의 꿈"},
+            "김도윤961211": {school: "예원", time: "2025-01-05 오후 01:30", piece1: "리스트 사랑의 꿈", piece2: "쇼팽 녹턴 Op.9 No.2"},
+            "윤민수960609": {school: "예원", time: "2025-01-05 오후 04:00", piece1: "모차르트 소나타 K.545", piece2: "리스트 사랑의 꿈"},
+            "정하나930119": {school: "서울대", time: "2025-01-05 오후 06:30", piece1: "베토벤 소나타 14번", piece2: "쇼팽 녹턴 Op.9 No.2"},
+            "박지원921214": {school: "서울대", time: "2025-01-05 오후 10:30", piece1: "리스트 사랑의 꿈", piece2: "쇼팽 녹턴 Op.9 No.2"},
+            "장지민911213": {school: "서울대", time: "2025-01-05 오후 07:00", piece1: "베토벤 소나타 14번", piece2: "리스트 사랑의 꿈"},
+            "윤지민901012": {school: "서울대", time: "2025-01-05 오후 08:00", piece1: "쇼팽 녹턴 Op.9 No.2", piece2: "모차르트 소나타 K.545"},
+            "송지우960514": {school: "예원", time: "2025-01-05 오후 11:30", piece1: "쇼팽 녹턴 Op.9 No.2", piece2: "모차르트 소나타 K.545"},
+            "김민수000809": {school: "예원", time: "2025-01-05 오후 05:00", piece1: "드뷔시 달빛", piece2: "베토벤 소나타 14번"},
+            "김지우990604": {school: "서울대", time: "2025-01-05 오전 09:00", piece1: "베토벤 소나타 14번", piece2: "모차르트 소나타 K.545"},
+            "송예린981122": {school: "예원", time: "2025-01-05 오후 02:30", piece1: "쇼팽 녹턴 Op.9 No.2", piece2: "베토벤 소나타 14번"},
+            "정하나910618": {school: "서울대", time: "2025-01-05 오전 09:30", piece1: "베토벤 소나타 14번", piece2: "드뷔시 달빛"},
+            "장유진930723": {school: "예원", time: "2025-01-05 오후 05:30", piece1: "쇼팽 녹턴 Op.9 No.2", piece2: "모차르트 소나타 K.545"},
+            "박지원900802": {school: "예원", time: "2025-01-05 오후 06:00", piece1: "베토벤 소나타 14번", piece2: "드뷔시 달빛"},
+            "김지민980817": {school: "서울대", time: "2025-01-05 오후 08:30", piece1: "모차르트 소나타 K.545", piece2: "쇼팽 녹턴 Op.9 No.2"},
+            "정도윤900616": {school: "서울대", time: "2025-01-05 오후 10:00", piece1: "베토벤 소나타 14번", piece2: "드뷔시 달빛"},
+            "최서윤920926": {school: "서울대", time: "2025-01-05 오후 11:00", piece1: "베토벤 소나타 14번", piece2: "모차르트 소나타 K.545"},
+            "윤예린920406": {school: "서울대", time: "2025-01-05 오후 12:30", piece1: "모차르트 소나타 K.545", piece2: "베토벤 소나타 14번"}
+        };
+
+        function checkTime() {
+            const name = document.getElementById("name").value.trim();
+            const birth = document.getElementById("birth").value.trim();
+            const key = name + birth;
+            const info = schedule[key];
+            const resultDiv = document.getElementById("result");
+
+            if (info) {
+                resultDiv.innerHTML = `
+                    <p><strong>${name}</strong> 님의 실기 정보입니다:</p>
+                    <p><b>지망학교:</b> ${info.school}</p>
+                    <p><b>실기 시간:</b> ${info.time}</p>
+                    <p><b>곡명:</b><br>• ${info.piece1}<br>• ${info.piece2}</p>
+                `;
+            } else {
+                resultDiv.innerHTML = "일치하는 정보가 없습니다. 이름과 생년월일을 다시 확인해주세요.";
+            }
+        }
+    </script>
+</body>
+</html>
